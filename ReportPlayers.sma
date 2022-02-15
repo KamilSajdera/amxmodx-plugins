@@ -10,8 +10,8 @@ new PlayerTimeBlock[32], PlayerNameBlock[32];
 
 
 new oddaj_id[33];
-new Reported[33]; // nick zgloszonego
-new IdReported; // id zgloszonego
+new Reported[33]; 
+new IdReported; 
 
 public plugin_init() 
 {
