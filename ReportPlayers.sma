@@ -27,27 +27,13 @@ public plugin_cfg()
 	new szError[512], szErr
 	MaxPlayers = get_maxplayers();
 
-	MySQL = SQL_MakeDbTuple("mysql30.mydevil.net", "m1163_ureports", "EH6ISMFP4xgfAhfSTlXN", "m1163_reports");
+	MySQL = SQL_MakeDbTuple("host", "user", "password", "database");
 	new Handle:SqlConnection = SQL_Connect(MySQL, szErr, szError, charsmax( szError ))
 
 	if(SqlConnection == Empty_Handle)
 		set_fail_state( szError )
 
-	set_task(1.0, "CheckLicence");
-
 }
-
-public CheckLicence() {
-	new hostname[128];
-	get_cvar_string("hostname", hostname, charsmax(hostname));
-	
-	if(containi(hostname, "DEAGLESHOT.EU") == -1) {
-		return set_fail_state("[BLAD] Plugin dziala tylko na serwerach DeagleShot.eu!");
-	}
-	
-	return PLUGIN_CONTINUE;
-}
-
 
 public PlayerMenu(id)
 {
