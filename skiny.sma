@@ -18,6 +18,7 @@ new cacheAWP[64];
 new userFrags[33] // fragi
 new g_name[33][48]
 new plik_vault
+
 new const knifePrice[][] = {
 	"100",
 	"300",
@@ -30,7 +31,9 @@ new const knifePrice[][] = {
 	"8000",
 	"14000"
 };
+
 ////START SKIN NAMES
+
 new const nameKnife[][] = 
 {
 	"Doppler | Ruby",
@@ -46,25 +49,30 @@ new const nameKnife[][] =
 	"Flip | Fade",
 	"Karambit | Dragon Lore"
 };
+
 new const nameM4[][] = 
 {
 	"M4A1 | Icarus Fell",
 	"M4A1 | Howl \y[VIP]",
 	"M4A1 | Space \y[VIP]"
 };
+
 new const nameAK[][] = 
 {
 	"AK47 | Anubis",
 	"AK47 | Wasteland Rebel \y[VIP]",
 	"AK47 | The Empress \y[VIP]"
 };
+
 new const nameAWP[][] = 
 {
 	"AWP | Oni Taiji",
 	"AWP | Phobos \y[VIP]",
 	"AWP | Dragon Lore \y[VIP]"
 };
+
 /// END SKIN NAMES
+
 /// START FILE NAMES
 new const fileNameKnife[][] = 
 {
@@ -81,18 +89,21 @@ new const fileNameKnife[][] =
 	"/noz/v_knifeNewFlip.mdl",
 	"/noz/v_knifeNewKarambit.mdl"
 };
+
 new const fileNameM4[][] = 
 {
 	"/m4a1/v_m4a1NewIcarus.mdl",
 	"/m4a1/v_m4a1NewHowl.mdl",
 	"/m4a1/v_m4a1NewDesolate.mdl"
 };
+
 new const fileNameAK[][] = 
 {
 	"/ak47/v_ak47NewAnubis.mdl",
 	"/ak47/v_ak47NewWesteland.mdl",
 	"/ak47/v_ak47NewEmpress.mdl"
 };
+
 new const fileNameAWP[][] = 
 {
 	"/awp/v_awpNewOni.mdl",
@@ -100,16 +111,24 @@ new const fileNameAWP[][] =
 	"/awp/v_awpNewDlore.mdl"
 };
 ////END FILE NAMES
+
+
+new const skinsPlayerCommands[][] =
+{
+	"/skiny",
+	"/skin",
+	"/skins",
+	"/modele",
+	"/models"
+};
+
+
 public plugin_init() { 
 	
 	register_plugin("Wybor skinow", "v2", "K@MILOVVSKY")
 	register_event("CurWeapon","CurWeapon","be","1=1") 
-	register_clcmd("say /skiny", "menuWyboru")
-	register_clcmd("say /skin", "menuWyboru")
-	register_clcmd("say /skins", "menuWyboru")
-	register_clcmd("say /modele", "menuWyboru")
-	register_clcmd("say /model", "menuWyboru")
-	register_clcmd("say /models", "menuWyboru")
+	registerCommands(skinsPlayerCommands, sizeof(skinsPlayerCommands), "menuWyboru");
+
 	plik_vault = nvault_open("fragi") //tutaj podajemy "nazwe" pliku z danymi
 	if(plik_vault == INVALID_HANDLE)
 		set_fail_state("Nie moge otworzyc pliku :/");
@@ -119,7 +138,7 @@ public plugin_init() {
 
 public client_disconnected(id) {
 	save_frags(id)
-	userFrags[id]=0 // zeby ktos kto wejdzie po nas nie mial naszych fragow zapisanych w tablicy
+	userFrags[id]=0 
 	copy(g_name[id], 47, "");
 }
 
@@ -600,4 +619,38 @@ public save_frags(id)
 	nvault_set(plik_vault,vaultkey,vaultdata) 
 	
 	return PLUGIN_CONTINUE
+}
+
+stock registerCommands(const array[][], arraySize, function[])
+{
+	#if !defined ForRange
+
+		#define ForRange(%1,%2,%3) for(new %1 = %2; %1 <= %3; %1++)
+
+	#endif
+
+	#if AMXX_VERSION_NUM >= 183
+	
+	ForRange(i, 0, arraySize - 1)
+	{
+		ForRange(j, 0, 1)
+		{
+			register_clcmd(fmt("%s %s", !j ? "say" : "say_team", array[i]), function);
+		}
+	}
+
+	#else
+
+	new newCommand[33];
+
+	ForRange(i, 0, arraySize - 1)
+	{
+		ForRange(j, 0, 1)
+		{
+			formatex(newCommand, charsmax(newCommand), "%s %s", !j ? "say" : "say_team", array[i]);
+			register_clcmd(newCommand, function);
+		}
+	}
+
+	#endif
 }
